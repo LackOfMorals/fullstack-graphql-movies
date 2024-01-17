@@ -13,9 +13,9 @@ const createApolloClient = () => {
   
   return new ApolloClient({
     link: new HttpLink({ 
-      uri: 'https://02b6eba2.21d7491fb5115cfb6434fca95c37b671.graphql.neo4j.io/graphql/',
+      uri: 'YOUR GRAPHQL FOR AURA ENDPOINT',
       headers:  { 'content-type':'application/json',
-      'x-api-key': 'vdyrYzxDkMkqM1BzCLoiMJzkjUxs4K30'
+      'x-api-key': 'YOUR API KEY FOR ENDPOINT'
       },
       fetch,
     }),
