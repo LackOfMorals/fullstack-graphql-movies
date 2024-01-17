@@ -2,34 +2,31 @@ import React, { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 
 export default function Home() {
-  const [selectedGenre, setSelectedGenre] = useState("Action");
+  const [selectedYear, setSelectedYear] = useState("1999");
 
   const MOVIE_SEARCH_QUERY = gql`
-    query MovieSearch($selectedGenre: String!) {
+    query MovieSearch($selectedYear: BigInt!) { 
       movies(
-        where: {
-          genres_SOME: { name: $selectedGenre }
-          imdbRating_GTE: 0.0
-          poster_NOT: ""
+        where: {released: $selectedYear}, 
+        options: {limit: 10, sort: {released: DESC}
         }
-        options: { limit: 100, sort: { imdbRating: DESC } }
-      ) {
-        title
-        plot
-        poster
-        imdbRating
-        actors {
-          name
-        }
-        genres {
-          name
-        }
+        ) 
+        {
+      released
+      tagline
+      title
+      peopleDirected {
+        name
+      }
+      peopleActedIn {
+        name
       }
     }
+  }
   `;
 
   const { loading, error, data } = useQuery(MOVIE_SEARCH_QUERY, {
-    variables: { selectedGenre },
+    variables: { selectedYear },
   });
 
   if (error) return <p>Error</p>;
@@ -40,14 +37,15 @@ export default function Home() {
       <h1>Movies Search</h1>
       <form>
         <label>
-          Select Movie Genre:
+          Select movie release year:
           <select
-            value={selectedGenre}
-            onChange={(event) => setSelectedGenre(event.target.value)}
+            value={selectedYear}
+            onChange={(event) => setSelectedYear(event.target.value)}
           >
-            <option value="Action">Action</option>
-            <option value="Adventure">Adventure</option>
-            <option value="Romance">Romance</option>
+            <option value="1999">1999</option>
+            <option value="2001">2001</option>
+            <option value="2002">2002</option>
+            <option value="2003">2003</option>
           </select>
         </label>
       </form>
@@ -56,10 +54,10 @@ export default function Home() {
       <table>
         <thead>
           <tr>
-            <th>Poster</th>
             <th>Title</th>
-            <th>Genre</th>
-            <th>Rating</th>
+            <th>Tagline</th>
+            <th>Directed by</th>
+            <th>Starring</th>
           </tr>
         </thead>
         <tbody>
@@ -67,18 +65,22 @@ export default function Home() {
             data.movies &&
             data.movies.map((m, i) => (
               <tr key={i}>
-                <td>
-                  <img src={m.poster} style={{ height: "50px" }}></img>
-                </td>
                 <td>{m.title}</td>
+                <td>{m.tagline}</td>
                 <td>
-                  {m.genres.reduce(
+                  {m.peopleDirected.reduce(
                     (acc, c, i) =>
                       acc + (i === 0 ? " " : ", ") + c.name,
                     ""
                   )}
                 </td>
-                <td>{m.imdbRating}</td>
+                <td>
+                  {m.peopleActedIn.reduce(
+                    (acc, c, i) =>
+                      acc + (i === 0 ? " " : ", ") + c.name,
+                    ""
+                  )}
+                </td>
               </tr>
             ))}
         </tbody>
