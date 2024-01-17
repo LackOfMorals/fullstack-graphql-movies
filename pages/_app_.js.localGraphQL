@@ -16,7 +16,7 @@ const createApolloClient = () => {
     link,
     cache: new InMemoryCache(),
     headers: {
-      'x-api-key': 'vdyrYzxDkMkqM1BzCLoiMJzkjUxs4K30',
+      'x-api-key': 'PUT KEY HERE',
       'Content-Type':'application/json'
     }
   });
